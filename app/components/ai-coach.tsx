@@ -1,252 +1,236 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Brain, TrendingUp, Target, Lightbulb, MessageCircle, Calendar } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Brain, TrendingUp, Target, Calendar, Award, Lightbulb, ChevronRight, Clock, Zap } from "lucide-react"
+import NeuroscienceCorner from "./neuroscience-corner"
 
-interface AICoachProps {
-  userStats: any
-  cognitiveScores: Record<string, number>
-}
+export default function AICoach() {
+  const [selectedInsight, setSelectedInsight] = useState(0)
 
-export default function AICoach({ userStats, cognitiveScores }: AICoachProps) {
-  // AI-generated insights based on user data
-  const getPersonalizedInsights = () => {
-    const weakestDomain = Object.entries(cognitiveScores).reduce(
-      (min, [key, value]) => (value < min.value ? { key, value } : min),
-      { key: "", value: 100 },
-    )
-
-    const strongestDomain = Object.entries(cognitiveScores).reduce(
-      (max, [key, value]) => (value > max.value ? { key, value } : max),
-      { key: "", value: 0 },
-    )
-
-    return {
-      weakestDomain,
-      strongestDomain,
-      averageScore: Math.round(
-        Object.values(cognitiveScores).reduce((a, b) => a + b, 0) / Object.values(cognitiveScores).length,
-      ),
-      streak: userStats.currentStreak,
-    }
-  }
-
-  const insights = getPersonalizedInsights()
-
-  const domainNames = {
-    workingMemory: "Working Memory",
-    processingSpeed: "Processing Speed",
-    attention: "Attention & Focus",
-    flexibility: "Cognitive Flexibility",
-    problemSolving: "Problem Solving",
-    visualProcessing: "Visual Processing",
-    executiveFunction: "Executive Function",
-    verbalFluency: "Verbal Fluency",
-    numericalReasoning: "Numerical Reasoning",
-    memoryConsolidation: "Memory Consolidation",
-  }
-
-  const recommendations = [
+  const insights = [
     {
       title: "Focus on Working Memory",
-      description: "Your working memory scores suggest room for improvement. Try the N-Back Challenge daily.",
+      description:
+        "Your working memory scores show the most potential for improvement. Consistent training in this area could boost your overall cognitive performance by 15-20%.",
+      recommendation: "Try the N-Back Challenge and Memory Matrix games daily for 2 weeks.",
       priority: "High",
-      icon: Brain,
-      action: "Start N-Back",
+      color: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
     },
     {
-      title: "Maintain Your Streak",
-      description: `Great job on your ${insights.streak}-day streak! Keep it going with short 5-minute sessions.`,
+      title: "Excellent Processing Speed",
+      description:
+        "Your reaction times are in the top 25% for your age group. Maintain this strength while building other cognitive areas.",
+      recommendation: "Continue with speed-based games 2-3 times per week to maintain your edge.",
       priority: "Medium",
-      icon: Target,
-      action: "Quick Session",
+      color: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
     },
     {
-      title: "Balanced Training",
-      description: "Consider rotating between different cognitive domains for well-rounded development.",
-      priority: "Low",
-      icon: TrendingUp,
-      action: "View Schedule",
+      title: "Attention Training Needed",
+      description:
+        "Your attention scores suggest difficulty with sustained focus. This is common and highly trainable with the right exercises.",
+      recommendation: "Start with 5-minute attention games and gradually increase duration.",
+      priority: "High",
+      color: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
     },
   ]
 
   const weeklyPlan = [
-    { day: "Monday", focus: "Working Memory", games: ["N-Back Challenge"], duration: "10 min" },
-    { day: "Tuesday", focus: "Processing Speed", games: ["Color Rush"], duration: "8 min" },
-    { day: "Wednesday", focus: "Attention", games: ["Focus Master"], duration: "12 min" },
-    { day: "Thursday", focus: "Problem Solving", games: ["Logic Puzzles"], duration: "15 min" },
-    { day: "Friday", focus: "Mixed Training", games: ["Quick Session"], duration: "10 min" },
-    { day: "Weekend", focus: "Review & Rest", games: ["Optional"], duration: "5 min" },
+    { day: "Monday", focus: "Working Memory", games: ["N-Back Challenge", "Memory Matrix"], duration: "15 min" },
+    { day: "Tuesday", focus: "Processing Speed", games: ["Color Rush", "Symbol Hunter"], duration: "12 min" },
+    { day: "Wednesday", focus: "Attention", games: ["Focus Master", "Attention Filter"], duration: "18 min" },
+    { day: "Thursday", focus: "Working Memory", games: ["Sequence Recall", "Mental Updating"], duration: "15 min" },
+    { day: "Friday", focus: "Mixed Training", games: ["Daily Challenge"], duration: "20 min" },
+    { day: "Saturday", focus: "Problem Solving", games: ["Logic Puzzles", "Pattern Recognition"], duration: "16 min" },
+    { day: "Sunday", focus: "Rest Day", games: ["Light Review"], duration: "5 min" },
   ]
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "High":
-        return "bg-red-100 text-red-800"
-      case "Medium":
-        return "bg-yellow-100 text-yellow-800"
-      case "Low":
-        return "bg-green-100 text-green-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
+  const achievements = [
+    { name: "Memory Master", description: "Complete 50 memory games", progress: 76, total: 50 },
+    { name: "Speed Demon", description: "Achieve sub-500ms reaction time", progress: 85, total: 100 },
+    { name: "Consistency King", description: "Train for 30 consecutive days", progress: 23, total: 30 },
+    { name: "Cognitive Athlete", description: "Reach level 10 in all domains", progress: 60, total: 100 },
+  ]
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">AI Coach</h2>
-        <p className="text-muted-foreground">Personalized insights and recommendations</p>
+    <div className="space-y-6 p-4">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">AI Coach</h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Personalized insights and recommendations for your cognitive training
+        </p>
       </div>
 
-      {/* AI Insights Summary */}
-      <Card className="bg-gradient-to-r from-purple-500 to-blue-500 text-white">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
-            Your Cognitive Profile
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm text-purple-100">Overall Score</div>
-              <div className="text-2xl font-bold">{insights.averageScore}%</div>
-            </div>
-            <div>
-              <div className="text-sm text-purple-100">Current Streak</div>
-              <div className="text-2xl font-bold">{insights.streak} days</div>
-            </div>
-          </div>
-          <div className="mt-4 p-3 bg-white/10 rounded-lg">
-            <div className="text-sm">
-              <strong>Strongest:</strong> {domainNames[insights.strongestDomain.key]} ({insights.strongestDomain.value}
-              %)
-            </div>
-            <div className="text-sm mt-1">
-              <strong>Focus Area:</strong> {domainNames[insights.weakestDomain.key]} ({insights.weakestDomain.value}%)
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="insights" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="insights">Insights</TabsTrigger>
+          <TabsTrigger value="plan">Weekly Plan</TabsTrigger>
+          <TabsTrigger value="achievements">Achievements</TabsTrigger>
+          <TabsTrigger value="neuroscience">Science</TabsTrigger>
+        </TabsList>
 
-      {/* Personalized Recommendations */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lightbulb className="h-4 w-4" />
-            Recommendations for You
-          </CardTitle>
-          <CardDescription>AI-powered suggestions based on your performance</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recommendations.map((rec, index) => {
-              const IconComponent = rec.icon
-              return (
-                <div key={index} className="flex items-start gap-4 p-4 border rounded-lg">
-                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
-                    <IconComponent className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{rec.title}</h3>
-                      <Badge className={getPriorityColor(rec.priority)}>{rec.priority}</Badge>
+        <TabsContent value="insights" className="space-y-4">
+          {/* AI Insights */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-blue-600" />
+                Personalized Insights
+              </CardTitle>
+              <CardDescription>AI-powered analysis of your cognitive performance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {insights.map((insight, index) => (
+                  <div
+                    key={index}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
+                      selectedInsight === index
+                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                        : "border-gray-200 hover:border-blue-300 dark:border-gray-700"
+                    }`}
+                    onClick={() => setSelectedInsight(index)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="font-semibold text-gray-900 dark:text-gray-100">{insight.title}</h3>
+                          <Badge className={insight.color}>{insight.priority}</Badge>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">{insight.description}</p>
+                        <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+                          <Lightbulb className="h-4 w-4" />
+                          <span className="text-sm font-medium">{insight.recommendation}</span>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">{rec.description}</p>
-                    <Button size="sm" variant="outline">
-                      {rec.action}
-                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Overall Progress</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">+12%</p>
                   </div>
                 </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
 
-      {/* Weekly Training Plan */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            Your Weekly Plan
-          </CardTitle>
-          <CardDescription>Optimized training schedule for maximum improvement</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {weeklyPlan.map((day, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                <div>
-                  <div className="font-medium">{day.day}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {day.focus} • {day.duration}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                    <Target className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Weekly Goal</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">85%</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-medium">{day.games.join(", ")}</div>
-                  <Badge variant="outline" className="text-xs">
-                    {day.duration}
-                  </Badge>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                    <Zap className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Streak</p>
+                    <p className="text-xl font-bold text-gray-900 dark:text-gray-100">23 days</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
 
-      {/* Motivational Message */}
-      <Card className="border-2 border-dashed border-green-300 bg-green-50 dark:bg-green-900/10">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <MessageCircle className="h-5 w-5 text-green-600 mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-green-800 dark:text-green-600">Daily Motivation</h3>
-              <p className="text-sm text-green-700 dark:text-green-500 mt-1">
-                "Your brain is like a muscle - the more you train it, the stronger it gets! You've already completed{" "}
-                {userStats.totalSessions} sessions. Keep up the amazing work!"
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="plan" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-green-600" />
+                Your Weekly Training Plan
+              </CardTitle>
+              <CardDescription>AI-optimized schedule based on your performance and goals</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {weeklyPlan.map((day, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-semibold">
+                        {day.day.slice(0, 3)}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{day.focus}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{day.games.join(", ")}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                      <Clock className="h-4 w-4" />
+                      <span className="text-sm">{day.duration}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Performance Trends */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Performance Trends
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <div>
-                <div className="font-medium">Reaction Time</div>
-                <div className="text-sm text-muted-foreground">Average response speed</div>
+        <TabsContent value="achievements" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-yellow-600" />
+                Achievement Progress
+              </CardTitle>
+              <CardDescription>Track your milestones and unlock new badges</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {achievements.map((achievement, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">{achievement.name}</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{achievement.description}</p>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {achievement.progress}%
+                      </span>
+                    </div>
+                    <Progress value={achievement.progress} className="h-2" />
+                  </div>
+                ))}
               </div>
-              <div className="text-right">
-                <div className="font-bold text-blue-600">-12ms</div>
-                <div className="text-xs text-green-600">↓ Improving</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-              <div>
-                <div className="font-medium">Accuracy Rate</div>
-                <div className="text-sm text-muted-foreground">Overall correctness</div>
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-green-600">+5%</div>
-                <div className="text-xs text-green-600">↑ Improving</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="neuroscience" className="space-y-4">
+          <NeuroscienceCorner />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
