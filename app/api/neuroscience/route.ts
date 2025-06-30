@@ -1,24 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Mock content for demonstration - replace with OpenAI integration when API key is available
-const mockContent = {
-  "Memory & Brain": `Your brain is remarkably adaptable through neuroplasticity - the ability to reorganize and form new neural connections throughout life. When you engage in cognitive training, you're literally rewiring your brain for better performance.
-
-Each time you complete a memory exercise, you strengthen synaptic connections between neurons. These connections become more efficient with practice, like well-traveled pathways in a forest. The hippocampus, your brain's memory center, grows new neurons through neurogenesis when challenged with novel tasks.
-
-Regular brain training increases the production of brain-derived neurotrophic factor (BDNF), a protein that promotes neuron growth and protects existing brain cells. This biological enhancement translates to improved working memory, faster information processing, and better cognitive flexibility.
-
-The key is consistency - just 15 minutes of daily cognitive training can create measurable changes in brain structure within weeks. Your dedication to mental fitness is literally sculpting a sharper, more resilient mind.`,
-
-  "Reaction Time": `Your reaction time reflects the speed of neural communication throughout your brain and nervous system. When you train cognitively, you're optimizing this biological network for peak performance.
-
-Faster reactions result from improved myelination - the process where fatty sheaths wrap around nerve fibers, increasing signal transmission speed by up to 100 times. Cognitive training stimulates oligodendrocytes, cells that produce myelin, creating more efficient neural highways.
-
-The prefrontal cortex, responsible for decision-making, becomes more efficient through training. Neural pathways become streamlined, reducing the time between stimulus recognition and motor response. This process, called neural efficiency, means your brain uses less energy while processing information faster.
-
-Regular cognitive challenges also enhance the corpus callosum, the bridge between brain hemispheres, improving coordination between different brain regions. As you continue training, you're building a high-performance neural network that responds with lightning speed to cognitive demands.`,
-}
-
 export async function POST(request: NextRequest) {
   try {
     const { topic } = await request.json()
@@ -27,11 +8,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Topic is required" }, { status: 400 })
     }
 
-    // For now, return mock content. Replace with OpenAI integration when API key is configured
-    const content = mockContent[topic as keyof typeof mockContent] || mockContent["Memory & Brain"]
+    // Mock content for demonstration (replace with OpenAI when API key is available)
+    const mockContent = {
+      "memory-brain": `Neuroplasticity is your brain's remarkable ability to reorganize and form new neural connections throughout life. When you engage in cognitive training, you're literally reshaping your brain's architecture. Each time you challenge your working memory, neurons fire together and strengthen their synaptic connections - following the principle "neurons that fire together, wire together."
 
-    // Simulate API delay for realistic experience
+Brain training exercises stimulate the production of BDNF (Brain-Derived Neurotrophic Factor), often called "Miracle-Gro for the brain." This protein promotes the growth of new neurons and protects existing ones. Regular cognitive challenges increase gray matter density in areas responsible for memory, attention, and executive function.
+
+The hippocampus, your brain's memory center, shows remarkable growth with consistent training. Studies reveal that just 8 weeks of cognitive exercises can increase hippocampal volume by 2-3%. Your brain is constantly adapting - every challenge you complete is building a stronger, more efficient neural network. Keep training, and watch your cognitive abilities soar!`,
+
+      "reaction-time": `Your reaction time is a direct reflection of your brain's processing efficiency. When you train cognitively, you're enhancing the speed at which electrical signals travel through your neural networks. This improvement occurs through myelination - the process where fatty sheaths wrap around nerve fibers, acting like insulation on electrical wires.
+
+Regular brain training increases myelin thickness by up to 20%, dramatically accelerating signal transmission. Your corpus callosum, the bridge connecting brain hemispheres, becomes more efficient at coordinating information between left and right brain regions. This enhanced connectivity reduces the time needed to process and respond to stimuli.
+
+Cognitive training also optimizes your brain's "neural highways" - frequently used pathways become more efficient through repeated activation. Your prefrontal cortex, responsible for decision-making, develops faster processing algorithms. The result? Lightning-fast reactions that give you an edge in sports, driving, and daily activities. Every training session is literally rewiring your brain for speed!`,
+    }
+
+    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    const content = mockContent[topic as keyof typeof mockContent]
+
+    if (!content) {
+      return NextResponse.json({ error: "Invalid topic" }, { status: 400 })
+    }
 
     return NextResponse.json({ content })
   } catch (error) {
