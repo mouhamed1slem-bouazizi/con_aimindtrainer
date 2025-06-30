@@ -30,10 +30,9 @@
     "@radix-ui/react-scroll-area": "latest",
     "@radix-ui/react-select": "latest",
     "@radix-ui/react-separator": "latest",
-<<<<<<< HEAD
-=======
+    
     "@radix-ui/react-sheet": "^1.1.0",
->>>>>>> 20888e035eca93f53fe0a61e212e1ddd64a9e549
+
     "@radix-ui/react-slider": "latest",
     "@radix-ui/react-slot": "latest",
     "@radix-ui/react-switch": "latest",
